@@ -1,4 +1,5 @@
 # Release artifact file manifest (explicit file list; no directory entries)
+.gitattributes
 .github/workflows/release-check.yml
 .gitignore
 CONTRIBUTING.md

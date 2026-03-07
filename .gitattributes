@@ -1,0 +1,11 @@
+# Force LF line endings on all platforms to ensure deterministic SHA-256 checksums.
+* text=auto eol=lf
+
+# Explicitly mark binary files so git never converts them.
+*.png binary
+*.gif binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.woff binary
+*.woff2 binary
