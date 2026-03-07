@@ -1,0 +1,157 @@
+name: Release Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  release-check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: obsidian-plugin/yazi-exporter/package-lock.json
+
+      - name: Install Lua Parser (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y lua5.4
+
+      - name: Install Lua Parser (macOS)
+        if: runner.os == 'macOS'
+        run: brew install lua
+
+      - name: Windows cleanup-cache.ps1 smoke (PowerShell 5.1)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $cacheRoot = Join-Path $env:RUNNER_TEMP "obsidian-yazi-cache-smoke"
+          if (Test-Path -LiteralPath $cacheRoot) {
+            Remove-Item -LiteralPath $cacheRoot -Recurse -Force
+          }
+
+          New-Item -ItemType Directory -Path (Join-Path $cacheRoot "img") -Force | Out-Null
+          New-Item -ItemType Directory -Path (Join-Path $cacheRoot "mode") -Force | Out-Null
+          New-Item -ItemType Directory -Path (Join-Path $cacheRoot "locks") -Force | Out-Null
+          New-Item -ItemType Directory -Path (Join-Path $cacheRoot "log") -Force | Out-Null
+          New-Item -ItemType Directory -Path (Join-Path $cacheRoot "requests") -Force | Out-Null
+          New-Item -ItemType Directory -Path (Join-Path $cacheRoot "requests\\queue") -Force | Out-Null
+          Set-Content -LiteralPath (Join-Path $cacheRoot ".obsidian-yazi-cache") -Value "obsidian-yazi-cache"
+
+          $oldPng = Join-Path $cacheRoot "img\\old.png"
+          Set-Content -LiteralPath $oldPng -Value "old"
+          (Get-Item -LiteralPath $oldPng).LastWriteTime = (Get-Date).AddDays(-10)
+
+          $oldQueue = Join-Path $cacheRoot "requests\\queue\\old.json"
+          Set-Content -LiteralPath $oldQueue -Value "{""old"":true}"
+          (Get-Item -LiteralPath $oldQueue).LastWriteTime = (Get-Date).AddDays(-10)
+
+          $env:OBSIDIAN_YAZI_CACHE = $cacheRoot
+          $env:OBSIDIAN_YAZI_TTL_DAYS = "3"
+          $env:OBSIDIAN_YAZI_LOCK_TTL_MIN = "15"
+
+          & "$env:GITHUB_WORKSPACE\\scripts\\cleanup-cache.ps1"
+
+          if (Test-Path -LiteralPath $oldPng) {
+            throw "cleanup-cache.ps1 smoke failed: old PNG was not removed"
+          }
+          if (Test-Path -LiteralPath $oldQueue) {
+            throw "cleanup-cache.ps1 smoke failed: old requests/queue file was not removed"
+          }
+
+      - name: Run Release Check
+        env:
+          OBSIDIAN_RELEASE_CHECK_STRICT_LUA: "1"
+        shell: bash
+        run: bash scripts/release-check.sh
+
+      - name: Package fails on dirty tracked file (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          printf '\nDIRTY_TRACKED_SMOKE\n' >> README.md
+          set +e
+          SKIP_RELEASE_CHECK=1 bash scripts/package-release.sh dirty-tracked-smoke
+          rc=$?
+          set -e
+          git checkout -- README.md
+          if [ "$rc" -eq 0 ]; then
+            echo "Expected package-release.sh to fail on dirty tracked worktree."
+            exit 1
+          fi
+
+      - name: Package fails on mismatched OBSIDIAN_RELEASE_REF (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          if ! git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
+            echo "Skipping mismatched RELEASE_REF smoke: repository has no parent commit."
+            exit 0
+          fi
+          prev_ref="$(git rev-parse HEAD~1)"
+          set +e
+          OBSIDIAN_RELEASE_REF="$prev_ref" SKIP_RELEASE_CHECK=1 bash scripts/package-release.sh ref-mismatch-smoke
+          rc=$?
+          set -e
+          if [ "$rc" -eq 0 ]; then
+            echo "Expected package-release.sh to fail when OBSIDIAN_RELEASE_REF is not HEAD."
+            exit 1
+          fi
+
+      - name: Release check fails on extra tracked file (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          tmp="$(mktemp -d)"
+          git clone "$GITHUB_WORKSPACE" "$tmp/repo" >/dev/null
+          cd "$tmp/repo"
+          git config user.name smoke
+          git config user.email smoke@example.com
+          printf 'extra\n' > scripts/local-note.txt
+          git add scripts/local-note.txt
+          git commit -m "smoke: extra tracked file" >/dev/null
+          set +e
+          OBSIDIAN_RELEASE_CHECK_STRICT_WORKTREE=0 \
+          OBSIDIAN_RELEASE_CHECK_SKIP_NPM_CI=1 \
+          OBSIDIAN_RELEASE_CHECK_SKIP_TYPECHECK=1 \
+          OBSIDIAN_RELEASE_CHECK_SKIP_TEST=1 \
+          OBSIDIAN_RELEASE_CHECK_SKIP_BUILD=1 \
+          OBSIDIAN_RELEASE_CHECK_SKIP_PREBUILT_SYNC=1 \
+          bash scripts/release-check.sh
+          rc=$?
+          set -e
+          if [ "$rc" -eq 0 ]; then
+            echo "Expected release-check.sh to fail when tracked files are outside RELEASE_MANIFEST.txt."
+            exit 1
+          fi
+
+      - name: Package Release Smoke (Linux/macOS)
+        if: runner.os == 'Linux' || runner.os == 'macOS'
+        shell: bash
+        run: |
+          VERSION="ci-smoke-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          bash scripts/package-release.sh "$VERSION"
+
+          PKG="dist/obsidian-yazi-render-${VERSION}"
+          test -f "${PKG}.tar.gz"
+          test -f "${PKG}.zip"
+          test -f "${PKG}.tar.gz.sha256"
+          test -f "${PKG}.zip.sha256"
+          test -f "${PKG}.checksums.txt"
+          test -f "${PKG}.prebuilt-main.js.sha256"

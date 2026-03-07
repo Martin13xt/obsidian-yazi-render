@@ -1,0 +1,9 @@
+{
+  "id": "yazi-exporter",
+  "name": "Yazi Exporter",
+  "version": "0.2.0",
+  "minAppVersion": "1.6.0",
+  "description": "Render the active note to Vault-external PNG cache for Yazi.",
+  "author": "codikzng",
+  "isDesktopOnly": true
+}

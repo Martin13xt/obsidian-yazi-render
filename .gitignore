@@ -1,0 +1,39 @@
+dist/
+obsidian-plugin/yazi-exporter/node_modules/
+obsidian-plugin/yazi-exporter/build-output/
+node_modules/
+.obsidian/
+.DS_Store
+
+# Local working artifacts (not for release)
+AGENTS.md
+bridge*.md
+ssh*.md
+skills/
+release-audit-*/
+
+# IDE / editor state
+.cursor/
+
+# Debug and oracle payloads (contain local paths / personal info)
+oracle_payload/
+scripts/debug-yazi-bundle.sh
+scripts/debug-yazi-p0-check.sh
+scripts/debug-yazi-reset-markers.sh
+scripts/debug-yazi-runtime-markers.sh
+scripts/send-oracle-full-debug.sh
+
+# Security / secrets
+.env
+.env.*
+*.pem
+*.key
+.npmrc
+
+# Editor / IDE state
+.vscode/
+.idea/
+
+# Build artifacts
+coverage/
+*.log
