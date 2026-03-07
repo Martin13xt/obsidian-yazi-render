@@ -324,6 +324,8 @@ fi
 info "Running installer config-merge smoke tests"
 if ! command -v jq >/dev/null 2>&1; then
   warn "Skipping installer smoke tests: jq is unavailable"
+elif ! command -v rsync >/dev/null 2>&1; then
+  warn "Skipping installer smoke tests: rsync is unavailable"
 else
   python_cmd=""
   if command -v python3 >/dev/null 2>&1; then
